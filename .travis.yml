@@ -4,7 +4,8 @@ python: "2.7"
 #before_install:
 #  - sudo apt-get install -qq python-apt python-pycurl
 
-#sudo: false
+# Use the new container infrastructure
+sudo: false
 
 # Install ansible
 addons:
