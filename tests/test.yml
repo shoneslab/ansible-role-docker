@@ -1,5 +1,6 @@
 ---
 - hosts: all
   become: True
+  remote_user: root
   roles:
     - .
