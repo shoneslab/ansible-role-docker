@@ -8,6 +8,7 @@
   apt:
     state: present
     pkg: "{{ item }}"
+  become: true  
   with_items: "{{ docker_prereq_packages }}"
   when: ansible_os_family == "Debian"
   tags: install_prereq
