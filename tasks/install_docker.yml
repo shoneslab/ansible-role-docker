@@ -1,0 +1,74 @@
+---
+- fail:
+    msg: "Docker needs 64-bit version of Ubuntu."
+  when: "ansible_architecture != 'x86_64'"
+  tags: fail_on_wrong_arch
+
+- name: install prereq
+  apt:
+    state: present
+    pkg: "{{ item }}"
+  with_items: "{{ docker_prereq_packages }}"
+  when: ansible_os_family == "Debian"
+  tags: install_prereq
+
+- name: add docker official GPG key
+  apt_key:
+    state: present
+    url: "{{ docker_gpg_key_url }}"
+    validate_certs: no
+  become: true
+  tags: docker_gpg_key
+
+- name: add docker apt repo
+  apt_repository:
+    state: present
+    repo: "{{ item }}"
+  become: true
+  with_items: "{{ docker_apt_repo_url }}"
+  when: ansible_distribution == "Ubuntu" and
+        ansible_distribution_release == "xenial"
+  tags: docker_apt_repo
+
+- name: update apt packages
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+  become: true
+  tags: update_apt
+
+- name: install extra packages for Trusty
+  apt:
+    state: present
+    name: "{{ item }}"
+  become: yes
+  with_items: "{{ docker_prereq_packages_trusty }}"
+  when: "ansible_distribution_release == 'trusty'"
+  tags: prereq_for_trusty
+
+- name: install docker with specific version
+  apt:
+    state: present
+    pkg: "{{ docker_package_name }}={{ docker_version }}"
+  when:
+    - ansible_os_family == "Debian"
+    - not(docker_version is undefined or docker_version is none or docker_version|trim == '')
+  become: true
+  tags: install_docker_specific_version
+
+- name: install docker with latest version
+  apt:
+    state: present
+    pkg: "{{ docker_package_name }}"
+  when:
+    - ansible_os_family == "Debian"
+    - docker_version is undefined or docker_version is none or docker_version|trim == ''
+  become: true
+  tags: install_docker_latest_version
+
+- name: create docker group
+  group:
+    state: present
+    name: docker
+  become: yes
+  tags: create_docker_group
