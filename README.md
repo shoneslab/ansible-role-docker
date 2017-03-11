@@ -1,5 +1,7 @@
-Role Name
-=========
+docker
+======
+[![Build Status](https://travis-ci.org/shoneslab/ansible-role-docker.svg?branch=master)](https://travis-ci.org/shoneslab/ansible-role-docker)
+
 
 This ansible role installs Docker community edition(ce) and enterprise edition(ee) on ubuntu hosts.
 
