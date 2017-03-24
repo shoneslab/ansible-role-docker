@@ -3,6 +3,6 @@
 - include: install_docker.yml
   tags: docker_install
 
-
-- debug:
-   msg: "{{ ansible_architecture }}"
+- include: install_docker_compose.yml
+  when: do_install_docker_compose == true
+  tags: docker_compose_install

@@ -8,7 +8,7 @@
   apt:
     state: present
     pkg: "{{ item }}"
-  become: true  
+  become: true
   with_items: "{{ docker_prereq_packages }}"
   when: ansible_os_family == "Debian"
   tags: install_prereq
@@ -28,7 +28,7 @@
   become: true
   with_items: "{{ docker_apt_repo_url }}"
   when: ansible_distribution == "Ubuntu" and
-        ansible_distribution_release == "xenial"
+        ansible_distribution_release == "xenial" or ansible_distribution_release == "yakkety"
   tags: docker_apt_repo
 
 - name: update apt packages

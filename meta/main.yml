@@ -1,17 +1,19 @@
 galaxy_info:
   author: Shone Jacob
-  description: Install Docker CE/EE
+  description: Install Docker CE/EE with docker-compose
   license: "license (BSD, MIT)"
-  min_ansible_version: 2.0
+  min_ansible_version: 2.2
   platforms:
   - name: Ubuntu
     versions:
      - trusty
      - xenial
+     - yakkety
 
   galaxy_tags:
     - system
-    - docker-ce
-    - docker-ee
+    - 'docker-ce'
+    - 'docker-ee'
+    - 'docker-compose'
 
 dependencies: []
