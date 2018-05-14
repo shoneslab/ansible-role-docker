@@ -1,0 +1,50 @@
+---
+- name: Remove Docker Repository
+  yum_repository:
+    name: docker-ce
+    state: absent
+  notify: yum-clean-metadata
+  when: ansible_distribution != "Fedora" 
+
+- name: centos | uninstall old Docker versions (if exists)
+  yum:
+    name: "{{ item }}"
+    state: "absent"
+  become: true
+  with_items:
+    - 'docker'
+    - 'docker-client'
+    - 'docker-client-latest'
+    - 'docker-common'
+    - 'docker-latest'
+    - 'docker-latest-logrotate'
+    - 'docker-logrotate'
+    - 'docker-selinux'
+    - 'docker-engine-selinux'
+    - 'docker-engine'
+  when: ansible_distribution != "Fedora"   
+
+- name: centos | uninstalling Docker
+  yum:
+    name: "docker-ce-{{ docker_version }}.el7.centos"
+    state: absent
+  become: true
+  when: ansible_distribution != "Fedora"   
+
+- name: centos | uninstalling Docker
+  yum:
+    name: "docker-ce-{{ docker_version }}.el7.centos"
+    state: absent
+  become: true
+  when: ansible_distribution != "Fedora"    
+
+- name: ubuntu | uninstall old Docker versions (if exists)
+  apt:
+    name: "{{ item }}"
+    state: "absent"
+  become: true
+  with_items:
+    - 'docker-engine'
+    - 'docker.io'
+    - 'lxc-docker'
+  when: ansible_distribution == "Ubuntu"   

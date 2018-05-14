@@ -2,7 +2,7 @@
 - name: download docker-compose
   get_url:
     url: "{{ docker_compose_repo_url }}"
-    dest: /usr/local/bin/docker-compose
+    dest: "{{docker_compose_bin_path}}/docker-compose"
     mode: a+x
   become: true
   tags:

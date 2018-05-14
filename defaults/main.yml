@@ -10,38 +10,89 @@ docker_prereq_packages_trusty:
   - linux-image-extra-{{ansible_kernel}}
   - linux-image-extra-virtual
 
+docker_cleanup: false
+
 # Community Edition
-docker_ce_version: 17.03.0~ce-0~ubuntu-{{ ansible_lsb.codename }}
-
-docker_ce_gpg_key_url: "https://download.docker.com/linux/ubuntu/gpg"
-
-docker_ce_apt_repo_url:
-  - "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_lsb.codename }} stable"
-
 docker_ce_package_name: docker-ce
 
+docker_ce_debian_version: 18.03.1~ce-0~ubuntu
+docker_ce_debian_gpg_key_url: "https://download.docker.com/linux/ubuntu/gpg"
+docker_ce_debian_apt_repo_url:
+  - "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_lsb.codename }} stable"
+
+docker_ce_redhat_version: 18.03.1.ce-1.el7.centos
+docker_ce_redhat_yum_repo_url: https://download.docker.com/linux/centos/7/$basearch/stable
+docker_ce_redhat_gpg_key_url: https://download.docker.com/linux/centos/gpg
+
+
+# Commercially supported docker engine
+docker_cs_package_name: 'docker-engine'
+
+docker_cs_redhat_version: 1.13.1.cs9-1.el7.centos
+docker_cs_redhat_rpm_key: https://sks-keyservers.net/pks/lookup?op=get&search=0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e
+dockee_cs_redhat_yum_repo_url: https://packages.docker.com/1.13/yum/repo/main/centos/7
+
+docker_cs_debian_version: 1.13.1~cs9-0~ubuntu-xenial
+docker_cs_debian_rpm_key: "https://sks-keyservers.net/pks/lookup?op=get&search=0xee6d536cf7dc86e2d7d56f59a178ac6c6238f52e"
+docker_cs_debian_apt_repo_url: "deb https://packages.docker.com/1.13/apt/repo ubuntu-{{ ansible_distribution_release }} main"
+
+
+
 # Enterprise Edition
-docker_ee_version: 17.03.0~ee-0~ubuntu-{{ ansible_lsb.codename }}
+# docker_ee_version: 17.06.2.ee.6
+# docker_ee_gpg_key_url: "https://storebits.docker.com/ee/centos/sub-2318b9e9-fda0-4b95-aa83-72ca52f7b225"
+# docker_ee_apt_repo_url:
+#   - "deb [arch=amd64] https://<docker-ee-url>/linux/{{ ansible_distribution|lower }} {{ ansible_lsb.codename }} stable-17.03"
+# docker_ee_package_name: docker-ee
 
-docker_ee_gpg_key_url: "https://<docker-ee-url>/gpg"
+# Change the following section to install the docker category (ce, ee, cs).
+# Override the following section in invenntory/playbook group_vars
+# Enabled Community Edition (ce)
 
-docker_ee_apt_repo_url:
-  - "deb [arch=amd64] https://<docker-ee-url>/linux/{{ ansible_distribution|lower }} {{ ansible_lsb.codename }} stable-17.03"
-
-docker_ee_package_name: docker-ee
-
-# Enable Community Edition (ce)
-# To Enable Enterprise Edition, Change the below values
-
-# If docker_version omits the version value, it will install the latest one
-docker_version: "{{ docker_ce_version }}"
-docker_gpg_key_url: "{{ docker_ce_gpg_key_url }}"
-docker_apt_repo_url: "{{ docker_ce_apt_repo_url }}"
-docker_package_name: "{{ docker_ce_package_name }}"
-
-enable_experimental_features: false
+docker_version: ce
+docker_apt_validate_certs: no
+docker_enable_experimental_features: true
 
 # For docker-compose
-do_install_docker_compose: true
-docker_compose_version: 1.11.2
+docker_compose_install: true
+docker_compose_version: 1.21.2
+docker_compose_bin_path: '/usr/local/bin'
 docker_compose_repo_url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-{{ ansible_system }}-{{ansible_architecture}}"
+
+
+docker_daemon_json:
+  # authorization-plugins:
+  #   - xxx
+  bridge: ""
+  cluster-advertise: ""
+  cluster-store: ""
+  debug: false
+  default-ulimit:
+    - "nproc=1024:2408"
+    - "nofile=1024:2408"
+  disable-legacy-registry: true
+  experimental: "{{ docker_enable_experimental_features }}"
+  icc: false
+  # insecure-registries:
+  #   - ""
+  #   - ""
+  labels:
+    - "com.shoneslabs.env=prod"
+    - "com.shoneslabs.datacenter=atlanta"
+    - "com.shoneslabs.node_function=kafka"
+    - "com.shoneslabs.version=1.0.0"
+  live-restore: false
+  log-driver: "json-file"
+  log-level: "info"
+  # NOTE: For Prometheus metrics collection
+  #metrics-addr: "127.0.0.1:9323"
+  selinux-enabled: false
+  storage-driver: ""
+  storage-opt: ""
+  # tls: true
+  # tlscacert: ""
+  # tlscert: ""
+  # tlskey: ""
+  # tlsverify: ""
+  userland-proxy: false
+  # userns-remap: ""

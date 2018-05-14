@@ -1,8 +1,18 @@
 ---
-# tasks file for docker
-- include: install_docker.yml
+- include: cleanup.yml
+  when: 
+    - ansible_os_family == "RedHat"  
+    - docker_cleanup
+  tags: docker_cleanup
+
+- debug: msg={{ ansible_os_family|lower }}
+
+- include: "{{ ansible_os_family|lower }}.yml"
   tags: docker_install
 
+- include: config_docker_daemon.yml
+  tags: docker_config
+
 - include: install_docker_compose.yml
-  when: do_install_docker_compose == true
+  when: docker_compose_install == true
   tags: docker_compose_install

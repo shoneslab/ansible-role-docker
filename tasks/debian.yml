@@ -1,0 +1,113 @@
+---
+# DOCKER CE INSTALLATION
+- name: Install Docker CE on Ubuntu
+  block:
+    - name: ubuntu | install prereq
+      apt:
+        state: present
+        pkg: "{{ item }}"
+      with_items: 
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+      become: true  
+
+    - name: ubuntu | add docker official GPG key
+      apt_key:
+        state: present
+        url: "{{ docker_ce_debian_gpg_key_url }}"
+        validate_certs: "{{ docker_apt_validate_certs }}"
+      become: true
+      tags: docker_gpg_key    
+
+    - name: ubuntu | add docker apt repo
+      apt_repository:
+        state: present
+        repo: "{{ item }}"
+      become: true
+      with_items: "{{ docker_ce_debian_apt_repo_url }}"
+      when: ansible_distribution == "Ubuntu" and
+            ansible_distribution_release == "xenial" or ansible_distribution_release == "yakkety"
+      tags: docker_apt_repo  
+
+    - name: update apt packages
+      apt:
+        update_cache: yes
+        cache_valid_time: 86400
+      become: true
+      tags: update_apt
+
+    - name: install extra packages for Trusty
+      apt:
+        state: present
+        name: "{{ item }}"
+      become: yes
+      with_items: "{{ docker_prereq_packages_trusty }}"
+      when: "ansible_distribution_release == 'trusty'"
+      tags: prereq_for_trusty
+
+    - name: install docker with specific version
+      apt:
+        state: present
+        pkg: "{{ docker_ce_package_name }}={{ docker_ce_debian_version }}"
+      when:
+        - ansible_os_family == "Debian"
+        - not(docker_version is undefined or docker_version is none or docker_version|trim == '')
+      become: true
+      tags: install_docker_specific_version  
+  when:  
+    - ansible_distribution == "Ubuntu" 
+    - docker_version == "ce"
+  become: true    
+  tags: docker_ce_ubuntu
+
+# DOCKER CS INSTALLATION
+- name: Install Docker CS on Ubuntu
+  block:
+    - name: debian | add docker public key
+      apt_key:
+        state: present
+        url: "{{ docker_cs_debian_rpm_key }}"
+
+    - name: debian | install prereq
+      apt:
+        state: present
+        pkg: "{{ item }}"
+      with_items: 
+        - apt-transport-https
+        - curl
+        - software-properties-common
+      tags: install_prereq
+
+    - name: ubuntu | add docker apt repo
+      apt_repository:
+        state: present
+        repo: "{{ item }}"
+      with_items: "{{ docker_cs_debian_apt_repo_url }}"
+      when: ansible_distribution_release == "xenial" or ansible_distribution_release == "yakkety"
+      tags: docker_apt_repo   
+
+    - name: update apt packages
+      apt:
+        update_cache: yes
+        cache_valid_time: 86400
+      tags: update_apt   
+
+    - name: install docker with specific version
+      apt:
+        state: present
+        pkg: "{{ docker_cs_package_name }}={{ docker_cs_debian_version }}"
+      tags: install_docker_specific_version   
+  when:  
+    - ansible_distribution == "Ubuntu" 
+    - docker_version == "cs"
+  become: true    
+  tags: docker_cs_ubuntu
+
+- name: create docker group
+  group:
+    state: present
+    name: docker
+  become: true
+  tags: create_docker_group

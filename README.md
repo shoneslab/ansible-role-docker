@@ -3,7 +3,7 @@ docker
 [![Build Status](https://travis-ci.org/shoneslab/ansible-role-docker.svg?branch=master)](https://travis-ci.org/shoneslab/ansible-role-docker)
 
 
-This ansible role installs Docker community edition(ce) and enterprise edition(ee) on ubuntu hosts.
+This ansible role installs Docker community edition(ce), commercially supported edition(cs) and enterprise edition(ee) on ubuntu hosts.
 
 Requirements
 ------------
@@ -63,7 +63,7 @@ docker_apt_repo_url: "{{ docker_ce_apt_repo_url }}"
 docker_package_name: "{{ docker_ce_package_name }}"
 ```
 
-enable_experimental_features: false
+docker_enable_experimental_features: false
 
 Example Playbook
 ----------------
@@ -72,6 +72,17 @@ Example Playbook
       roles:
          - { role: docker }
 
+Testing         
+-------
+pre-requisites:
+vagrant and virtual box
+
+```
+pip install molecule
+pip install python-vagrant
+
+molecule test
+```
 License
 -------
 

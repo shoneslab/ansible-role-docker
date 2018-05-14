@@ -1,0 +1,15 @@
+---
+- name: ensure /etc/docker folder exists
+  file:
+    path: "/etc/docker"
+    state: "directory"
+  become: true
+  tags: docker_daemon
+
+- name: config daemon.json
+  template:
+    src: "daemon.json.j2"
+    dest: "/etc/docker/daemon.json"
+  notify: "restart docker"
+  become: true
+  tags: docker_daemon

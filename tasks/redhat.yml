@@ -1,0 +1,78 @@
+
+# DOCKER CE INSTALLATION
+- name: Install Docker CE on CentOS
+  block:
+    - name: centos | install prereq
+      yum:
+        state: present
+        name: "{{ item }}"
+      with_items: 
+        - 'yum-utils'
+        - 'device-mapper-persistent-data'
+        - 'lvm2'
+      tags: install_prereq
+      when: ansible_distribution != "Fedora"       
+
+    - name: centos | add docker-ce repository
+      yum_repository:
+        name: docker-ce
+        description: Docker CE YUM Repo
+        baseurl: "{{ docker_ce_redhat_yum_repo_url }}"
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: "{{ docker_ce_redhat_gpg_key_url }}"
+      when: ansible_distribution != "Fedora"      
+
+    - name: centos | installing Docker
+      yum:
+        name: "docker-ce-{{ docker_ce_redhat_version }}"
+        state: present
+      notify: 'restart docker'
+      when: 
+        - ansible_distribution != "Fedora"       
+        - ansible_os_family == "RedHat"
+  when:  
+    - ansible_distribution != "Fedora"  
+    - docker_version == "ce"
+  become: true    
+  tags: docker_ce_centos      
+    
+    
+# DOCKER CS INSTALLATION
+- name: Install Docker CS on CentOS
+  block:
+    - name: centos | add docker public key
+      rpm_key:
+        state: present
+        key: "{{ docker_cs_redhat_rpm_key }}" 
+
+    - name: centos | install prereq
+      yum:
+        state: present
+        name: "yum-utils"
+      tags: install_prereq
+
+    - name: centos | add docker-ce repository
+      yum_repository:
+        name: docker-cs
+        description: Docker CS YUM Repo
+        baseurl: "{{ dockee_cs_redhat_yum_repo_url }}"
+        enabled: yes 
+
+    - name: centos | install docker-engine
+      yum:
+        state: present
+        name: "docker-engine-{{ docker_cs_redhat_version }}"
+      tags: install_prereq
+  when:  
+    - ansible_distribution != "Fedora" 
+    - docker_version == "cs"
+  become: true    
+  tags: docker_cs_centos
+
+- name: create docker group
+  group:
+    state: present
+    name: docker
+  become: true
+  tags: create_docker_group

@@ -1,0 +1,8 @@
+*.cache
+*.git
+*.molecule
+*.vagrant
+*.log
+*.retry
+.DS_Store
+*.pyc

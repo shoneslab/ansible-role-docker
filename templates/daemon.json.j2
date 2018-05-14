@@ -1,0 +1,3 @@
+{% if docker_daemon_json is defined %}
+{{ docker_daemon_json|to_nice_json }}
+{% endif %}
