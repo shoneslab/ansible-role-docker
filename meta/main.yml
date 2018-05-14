@@ -12,8 +12,8 @@ galaxy_info:
      - yakkety
      - zesty 
   - name: EL
-      versions:
-        - 7
+    versions:
+      - 7
   galaxy_tags:
     - system
     - 'docker-ce'
