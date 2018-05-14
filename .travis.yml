@@ -26,7 +26,7 @@ install:
 script:
   # Basic role syntax check
   - ansible-playbook -i tests/inventory tests/test.yml --syntax-check
-  - molecule test
+  #- molecule test
   #- ansible-playbook -i tests/inventory tests/test.yml --connection=local --become -vvvv
 
 notifications:
